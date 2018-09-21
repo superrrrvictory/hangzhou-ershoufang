@@ -74,8 +74,8 @@ def main():
         for result in results:
             print(result)
             result1.append(result)
-            print(result1)
-            save_to_my_computer(result1)
+        print(result1)
+        save_to_my_computer(result1)
         print("=========")
     # save_to_my_computer(result1)
 
