@@ -8,7 +8,7 @@ headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'}
 base_url = 'http://jjhygl.hzfc.gov.cn/webty/WxAction_getGpxxSelectList.jspx?page='
 
-#请求页面并爬取需要的信息
+
 def parse_one_page(url):
     r = requests.get(url, headers=headers)
     hjson = r.json()
@@ -23,19 +23,19 @@ def parse_one_page(url):
         item[u'挂牌机构'] = i['mdmc']
         item[u'首次挂牌时间'] = i['scgpshsj']
         yield item
-    time.sleep(2)
+    time.sleep(3)
     # print(item)
     # print("=========")
     # print("done")
 
 
-# 定义存储格式
+# #
 def save_to_my_computer(result1):
     wb = xlsxwriter.Workbook('./result1.xlsx')
     worksheet = wb.add_worksheet()
     bold_format = wb.add_format({'bold': True})
-#     money_format = wb.add_format({'num_format': '$#,##0'})
-#     date_format = wb.add_format({'num_format': 'mmmm d yyyy'})
+    money_format = wb.add_format({'num_format': '$#,##0'})
+    date_format = wb.add_format({'num_format': 'mmmm d yyyy'})
     worksheet.set_column("A:G", 15)
     worksheet.write('A1', '房屋编号', bold_format)
     worksheet.write('B1', '房屋面积', bold_format)
@@ -57,7 +57,8 @@ def save_to_my_computer(result1):
         worksheet.write_string(row, col + 6, str(item['首次挂牌时间']))
         row += 1
     wb.close()
-# 定义主函数
+
+
 def main():
     urls = []
     result1 = []
@@ -67,13 +68,17 @@ def main():
     n = int(input())
     for i in range(m, n):
         urls.append('http://jjhygl.hzfc.gov.cn/webty/WxAction_getGpxxSelectList.jspx?page=' + str(i))
-    for url in urls:
+    for k, url in enumerate(urls):
+        print("正在加载第" + str(k + 1) + "页")
         results = parse_one_page(url)
         for result in results:
             print(result)
-        result1.append(result)
-    print(result1)
-    save_to_my_computer(result1)
+            result1.append(result)
+            print(result1)
+            save_to_my_computer(result1)
+        print("=========")
+    # save_to_my_computer(result1)
+
 
 if __name__ == "__main__":
     main()
